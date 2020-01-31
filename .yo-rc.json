@@ -1,0 +1,9 @@
+{
+  "generator-node": {
+    "promptValues": {
+      "authorName": "Brian Kennedy",
+      "authorEmail": "bpkennedy@gmail.com",
+      "authorUrl": ""
+    }
+  }
+}
