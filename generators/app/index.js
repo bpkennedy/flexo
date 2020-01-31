@@ -69,6 +69,11 @@ async function configureOptions() {
   if (linter.includes('javascript')) {
     packageJson.scripts['js-lint'] = 'eslint src/**/*.js';
   }
+
+  if (linter.includes('php')) {
+    packageJson.scripts['php-lint'] =
+      'vendor/bin/phpcs --standard=WordPressVIPMinimum -sp --basepath=. --ignore=vendor src';
+  }
 }
 
 async function installOptions(ctx) {
@@ -87,6 +92,24 @@ async function installOptions(ctx) {
     ctx.fs.writeJSON(
       ctx.destinationPath(baseDirectory + '.eslintrc'),
       eslintConfig
+    );
+  }
+
+  if (linter.includes('php')) {
+    // ctx.spawnCommand('composer', [
+    //   'require',
+    //   'squizlabs/php_codesniffer',
+    //   '--dev'
+    // ]);
+    ctx.spawnCommand('composer', [
+      'require',
+      'automattic/vipwpcs',
+      'dealerdirect/phpcodesniffer-composer-installer',
+      '--dev'
+    ]);
+    ctx.fs.copy(
+      ctx.templatePath('phpcs.xml'),
+      ctx.destinationPath(baseDirectory + 'phpcs.xml')
     );
   }
 }
