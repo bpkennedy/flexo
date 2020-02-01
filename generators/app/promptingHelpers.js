@@ -1,19 +1,19 @@
-const chalk = require("chalk");
+const chalk = require('chalk');
 
 function validateProjectName(value) {
   if (!value || value.length === 0) {
-    return chalk.red("You must type a value.");
+    return chalk.red('You must type a value.');
   }
 
-  if (value.trim().indexOf(" ") > 0) {
+  if (value.trim().indexOf(' ') > 0) {
     return chalk.red(
-      "Value must not contain spaces. Try dashes or underscores instead."
+      'Value must not contain spaces. Try dashes or underscores instead.'
     );
   }
 
-  if (value.match("[^\\w-_]") !== null) {
+  if (value.match('[^\\w-_]') !== null) {
     return chalk.red(
-      "Only special characters allowed are dashes and underscores."
+      'Only special characters allowed are dashes and underscores.'
     );
   }
 
@@ -22,12 +22,12 @@ function validateProjectName(value) {
 
 function validateDisplayName(value) {
   if (!value || value.length === 0) {
-    return chalk.red("You must type a value.");
+    return chalk.red('You must type a value.');
   }
 
-  if (value.match("[^\\w-_]") !== null) {
+  if (value.match('[^\\w-_]') !== null) {
     return chalk.red(
-      "Only special characters allowed are dashes and underscores."
+      'Only special characters allowed are dashes and underscores.'
     );
   }
 
