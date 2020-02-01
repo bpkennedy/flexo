@@ -22,11 +22,12 @@ let packageJson = {
   name: '',
   version: '0.1.0',
   description: '',
+  private: true,
   main: 'index.php',
   scripts: {},
   author: '',
   homepage: '',
-  license: 'MIT',
+  license: 'UNLICENSED',
   engines: {
     npm: '>= 10.0.0'
   },
