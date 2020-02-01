@@ -96,21 +96,12 @@ async function installOptions(ctx) {
   }
 
   if (linter.includes('php')) {
-    // ctx.spawnCommand('composer', [
-    //   'require',
-    //   'squizlabs/php_codesniffer',
-    //   '--dev'
-    // ]);
     ctx.spawnCommand('composer', [
       'require',
       'automattic/vipwpcs',
       'dealerdirect/phpcodesniffer-composer-installer',
       '--dev'
     ]);
-    ctx.fs.copy(
-      ctx.templatePath('phpcs.xml'),
-      ctx.destinationPath(baseDirectory + 'phpcs.xml')
-    );
   }
 }
 
