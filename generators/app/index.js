@@ -62,17 +62,21 @@ async function configureOptions() {
   packageJson.name = answers.name;
 
   if (linter.includes('css')) {
-    packageJson.scripts['style-lint'] = 'stylelint src/style.css';
-    packageJson.scripts['style-lint-fix'] = 'stylelint src/style.css --fix';
+    packageJson.scripts['lint-css'] = 'stylelint src/style.css';
   }
 
   if (linter.includes('javascript')) {
-    packageJson.scripts['js-lint'] = 'eslint src/**/*.js';
+    packageJson.scripts['lint-js'] = 'eslint src/**/*.js';
   }
 
   if (linter.includes('php')) {
-    packageJson.scripts['php-lint'] =
+    packageJson.scripts['lint-php'] =
       'vendor/bin/phpcs --standard=WordPressVIPMinimum -sp --basepath=. --ignore=vendor src';
+  }
+
+  if (linter !== []) {
+    packageJson.scripts.lint =
+      'npm run lint-css --if-present && npm run lint-js --if-present && npm run lint-php --if-present';
   }
 }
 
@@ -92,6 +96,10 @@ async function installOptions(ctx) {
     ctx.fs.writeJSON(
       ctx.destinationPath(baseDirectory + '.eslintrc'),
       eslintConfig
+    );
+    ctx.fs.copy(
+      ctx.templatePath('index.js'),
+      ctx.destinationPath(srcDirectory + '/index.js')
     );
   }
 
@@ -140,15 +148,10 @@ module.exports = class extends Generator {
     const linterPrompt = new MultiSelect({
       name: 'lint',
       message:
-        'What code standard linting libraries do you want? (Space to select/unselect and press enter to confirm selection)',
-      limit: 4,
-      initial: 0,
+        'What code standard linting libraries do you want? (Space to check/uncheck options)',
+      limit: 3,
       multiple: true,
       choices: [
-        {
-          name: 'none',
-          value: 'none'
-        },
         {
           name: 'css',
           value: 'css',
