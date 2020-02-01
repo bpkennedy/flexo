@@ -68,6 +68,7 @@ async function configureOptions() {
 
   if (linter.includes('javascript')) {
     packageJson.scripts['lint-js'] = 'eslint src/**/*.js';
+    packageJson.scripts['build-js'] = 'webpack --config webpack.config.js';
   }
 
   if (linter.includes('php')) {
@@ -94,6 +95,8 @@ async function installOptions(ctx) {
   if (linter.includes('javascript')) {
     ctx.npmInstall(['eslint'], { 'save-dev': true });
     ctx.npmInstall(['@wordpress/eslint-plugin'], { 'save-dev': true });
+    ctx.npmInstall(['webpack'], { 'save-dev': true });
+    ctx.npmInstall(['webpack-cli'], { 'save-dev': true });
     ctx.fs.writeJSON(
       ctx.destinationPath(baseDirectory + '.eslintrc'),
       eslintConfig
