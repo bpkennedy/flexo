@@ -6,7 +6,7 @@ const replace = require('replace-in-file');
 const download = require('download-git-repo');
 const chalk = require('chalk');
 const yosay = require('yosay');
-const { prompt, MultiSelect } = require('enquirer');
+const inquirer = require('inquirer');
 const {
   validateProjectName,
   validateDisplayName
@@ -126,7 +126,7 @@ module.exports = class extends Generator {
       )
     );
 
-    answers = await prompt([
+    answers = await inquirer.prompt([
       {
         type: 'input',
         name: 'name',
@@ -149,30 +149,34 @@ module.exports = class extends Generator {
       }
     ]);
 
-    const linterPrompt = new MultiSelect({
-      name: 'lint',
-      message:
-        'What code standard linting libraries do you want? (Space to check/uncheck options)',
-      limit: 3,
-      multiple: true,
-      choices: [
-        {
-          name: 'css',
-          value: 'css',
-          enabled: true
-        },
-        {
-          name: 'javascript',
-          value: 'javascript'
-        },
-        {
-          name: 'php',
-          value: 'php'
-        }
-      ]
-    });
+    const lintPrompt = await inquirer.prompt([
+      {
+        name: 'lint',
+        type: 'checkbox',
+        message:
+          'What code standard linting libraries do you want? (Space to check/uncheck options)',
+        multiple: true,
+        choices: [
+          {
+            name: 'css',
+            value: 'css',
+            checked: true
+          },
+          {
+            name: 'javascript',
+            value: 'javascript',
+            checked: true
+          },
+          {
+            name: 'php',
+            value: 'php',
+            checked: true
+          }
+        ]
+      }
+    ]);
 
-    linter = await linterPrompt.run();
+    linter = lintPrompt.lint;
   }
 
   writing() {}

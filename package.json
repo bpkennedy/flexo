@@ -22,16 +22,16 @@
     "generator"
   ],
   "devDependencies": {
-    "yeoman-test": "^1.7.0",
-    "yeoman-assert": "^3.1.0",
     "eslint": "^6.6.0",
-    "prettier": "^1.19.1",
-    "husky": "^3.0.9",
-    "lint-staged": "^9.4.3",
     "eslint-config-prettier": "^6.6.0",
-    "eslint-plugin-prettier": "^3.1.1",
     "eslint-config-xo": "^0.27.2",
-    "jest": "^24.8.0"
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.9",
+    "jest": "^24.8.0",
+    "lint-staged": "^9.4.3",
+    "prettier": "^1.19.1",
+    "yeoman-assert": "^3.1.0",
+    "yeoman-test": "^1.7.0"
   },
   "engines": {
     "npm": ">= 10.0.0"
@@ -39,7 +39,7 @@
   "dependencies": {
     "chalk": "^2.1.0",
     "download-git-repo": "^3.0.2",
-    "enquirer": "^2.3.4",
+    "inquirer": "^7.0.4",
     "json": "^9.0.6",
     "mkdirp": "^1.0.3",
     "replace-in-file": "^5.0.2",
