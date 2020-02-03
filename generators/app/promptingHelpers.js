@@ -25,12 +25,6 @@ function validateDisplayName(value) {
     return chalk.red('You must type a value.');
   }
 
-  if (value.match('[^\\w-_]') !== null) {
-    return chalk.red(
-      'Only special characters allowed are dashes and underscores.'
-    );
-  }
-
   return true;
 }
 

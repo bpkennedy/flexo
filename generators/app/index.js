@@ -83,6 +83,8 @@ async function configureOptions() {
   packageJson.scripts['copy-to-wp'] = `cpx "dist/**/*.*" "wp-content/themes/${answers.name}"`;
   packageJson.scripts['clean-wp'] = `rimraf "wp-content/themes/${answers.name}/*"`
   packageJson.scripts.start = 'docker-compose up -d'
+  packageJson.scripts.backup = "docker exec -it test_db_1 /usr/bin/mysqldump -u wordpress -pwordpress wordpress > backups/backup_$(date +%Y-%m-%d-%H.%M.%S).sql",
+  packageJson.scripts.restore = "docker exec test_db_1 /usr/bin/mysqldump -u wordpress -pwordpress wordpress < backups/$BACKUP_FILE_NAME.sql"
 }
 
 async function installOptions(ctx) {
@@ -178,8 +180,26 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'name',
-        message: 'Your project name',
+        message: 'Your project name (slug)',
         validate: validateProjectName
+      },
+      {
+        type: 'checkbox',
+        name: 'type',
+        message: 'Are you creating a Plugin or a Theme?',
+        multiple: true,
+        choices: [
+          {
+            name: 'Theme',
+            value: 'theme',
+            checked: true
+          },
+          {
+            name: 'Plugin (coming soon)',
+            value: 'plugin',
+            disabled: true
+          }
+        ]
       },
       {
         type: 'input',
@@ -188,12 +208,23 @@ module.exports = class extends Generator {
         validate: validateDisplayName
       },
       {
-        type: 'select',
+        type: 'checkbox',
         name: 'theme',
         message:
           'What starter parent theme do you want to use? (Press Enter/Return)',
-        initial: 0,
-        choices: ['blankslate (latest master branch)']
+        multiple: true,
+        choices: [
+          {
+            name: 'blankslate (latest master branch)',
+            value: 'blankslate (latest master branch)',
+            checked: true
+          },
+          {
+            name: '_s (coming soon)',
+            value: '_s',
+            disabled: true
+          }
+        ]
       }
     ]);
 
@@ -202,11 +233,11 @@ module.exports = class extends Generator {
         name: 'lint',
         type: 'checkbox',
         message:
-          'What code standard linting libraries do you want? (Space to check/uncheck options)',
+          'For what languages do you want linting setup? (Space to check/uncheck options)',
         multiple: true,
         choices: [
           {
-            name: 'css',
+            name: 'css/scss/sass',
             value: 'css',
             checked: true
           },
@@ -233,8 +264,10 @@ module.exports = class extends Generator {
     baseDirectory = './' + answers.name + '/';
     srcDirectory = baseDirectory + 'src';
     themeDirectory = baseDirectory + `wp-content/themes/${answers.name}`;
+    const backupsDirectory = baseDirectory + 'backups';
 
     mkdirp.sync(baseDirectory);
+    mkdirp.sync(backupsDirectory);
     mkdirp.sync(srcDirectory);
     mkdirp.sync(themeDirectory);
 
