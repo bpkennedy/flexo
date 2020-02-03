@@ -31,6 +31,7 @@ let packageJson = {
   engines: {
     npm: '>= 10.0.0'
   },
+  browserslist: [ "extends @wordpress/browserslist-config" ],
   dependencies: {},
   devDependencies: {}
 };
@@ -63,12 +64,11 @@ async function configureOptions() {
   packageJson.name = answers.name;
 
   if (linter.includes('css')) {
-    packageJson.scripts['lint-css'] = 'stylelint src/style.css';
+    packageJson.scripts['lint-css'] = 'stylelint src/style.scss';
   }
 
   if (linter.includes('javascript')) {
     packageJson.scripts['lint-js'] = 'eslint src/**/*.js';
-    packageJson.scripts['build-js'] = 'webpack --config webpack.config.js';
   }
 
   if (linter.includes('php')) {
@@ -76,16 +76,22 @@ async function configureOptions() {
       'vendor/bin/phpcs --standard=WordPressVIPMinimum -sp --basepath=. --ignore=vendor src';
   }
 
-  if (linter !== []) {
-    packageJson.scripts.lint =
-      'npm run lint-css --if-present && npm run lint-js --if-present && npm run lint-php --if-present';
-  }
+  packageJson.scripts.webpack = 'webpack --config webpack.config.js';
+  packageJson.scripts.lint =
+    'npm run lint-css --if-present && npm run lint-js --if-present && npm run lint-php --if-present';
+  packageJson.scripts.build = 'npm run webpack && npm run clean-wp && npm run copy-to-wp';
+  packageJson.scripts['copy-to-wp'] = `cpx "dist/**/*.*" "wp-content/themes/${answers.name}"`;
+  packageJson.scripts['clean-wp'] = `rimraf "wp-content/themes/${answers.name}/*"`
+  packageJson.scripts.start = 'docker-compose up -d'
 }
 
 async function installOptions(ctx) {
+  await ctx.npmInstall();
+
   if (linter.includes('css')) {
-    ctx.npmInstall(['stylelint'], { 'save-dev': true });
-    ctx.npmInstall(['stylelint-config-wordpress'], { 'save-dev': true });
+    ctx.npmInstall(['stylelint', 'stylelint-config-wordpress'], {
+      'save-dev': true
+    });
     ctx.fs.writeJSON(
       ctx.destinationPath(baseDirectory + '.stylelintrc.json'),
       styleLintConfig
@@ -93,17 +99,12 @@ async function installOptions(ctx) {
   }
 
   if (linter.includes('javascript')) {
-    ctx.npmInstall(['eslint'], { 'save-dev': true });
-    ctx.npmInstall(['@wordpress/eslint-plugin'], { 'save-dev': true });
-    ctx.npmInstall(['webpack'], { 'save-dev': true });
-    ctx.npmInstall(['webpack-cli'], { 'save-dev': true });
+    ctx.npmInstall(['eslint', '@wordpress/eslint-plugin'], {
+      'save-dev': true
+    });
     ctx.fs.writeJSON(
       ctx.destinationPath(baseDirectory + '.eslintrc'),
       eslintConfig
-    );
-    ctx.fs.copy(
-      ctx.templatePath('index.js'),
-      ctx.destinationPath(srcDirectory + '/index.js')
     );
   }
 
@@ -115,6 +116,53 @@ async function installOptions(ctx) {
       '--dev'
     ]);
   }
+
+  ctx.npmInstall(
+    [
+      'webpack',
+      'webpack-cli',
+      '@wordpress/browserslist-config',
+      'rimraf',
+      'clean-webpack-plugin',
+      'copy-webpack-plugin',
+      'cpx',
+      '@babel/core',
+      'babel-loader',
+      '@babel/preset-env',
+      '@babel/runtime',
+      'core-js@3',
+      'css-loader',
+      'sass',
+      'sass-loader',
+      'postcss-loader',
+      'postcss-preset-env',
+      'cssnano',
+      'mini-css-extract-plugin',
+      'file-loader'
+    ],
+    { 'save-dev': true }
+  );
+  ctx.fs.copy(
+    ctx.templatePath('index.js'),
+    ctx.destinationPath(srcDirectory + '/index.js')
+  );
+  ctx.fs.copy(
+    ctx.templatePath('fx-style.scss'),
+    ctx.destinationPath(srcDirectory + '/fx-style.scss')
+  );
+  ctx.fs.copy(
+    ctx.templatePath('fx-sample.png'),
+    ctx.destinationPath(srcDirectory + '/fx-sample.png')
+  );
+  ctx.fs.copy(
+    ctx.templatePath('fx-sample.ttf'),
+    ctx.destinationPath(srcDirectory + '/fx-sample.ttf')
+  );
+  ctx.fs.copyTpl(
+    ctx.templatePath('webpack.config.js'),
+    ctx.destinationPath(baseDirectory + '/webpack.config.js'),
+    { name: answers.name }
+  );
 }
 
 module.exports = class extends Generator {
@@ -213,7 +261,6 @@ module.exports = class extends Generator {
         const projectDir = path.resolve(process.cwd(), answers.name);
         process.chdir(projectDir);
 
-        this.npmInstall();
         await installOptions(this);
       }
     });

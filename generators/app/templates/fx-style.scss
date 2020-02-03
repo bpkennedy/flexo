@@ -1,0 +1,16 @@
+/* FLEXO - import default theme style.css */
+@import "./style";
+
+/* FLEXO - demonstrate using custom font from src directory */
+@font-face {
+  font-family: 'FlexoSampleFont';
+  src: url('./fx-sample.ttf') format('truetype');
+}
+.sample-font-relative-to-src-directory {
+  font-family: 'FlexoSampleFont';
+}
+
+/* FLEXO - demonstrate using images from src directory */
+.sample-image-relative-to-src-directory {
+  background: url('./fx-sample.png');
+}
