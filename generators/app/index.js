@@ -83,8 +83,8 @@ async function configureOptions() {
   packageJson.scripts['copy-to-wp'] = `cpx "dist/**/*.*" "wp-content/themes/${answers.name}"`;
   packageJson.scripts['clean-wp'] = `rimraf "wp-content/themes/${answers.name}/*"`
   packageJson.scripts.start = 'docker-compose up -d'
-  packageJson.scripts.backup = "docker exec -it test_db_1 /usr/bin/mysqldump -u wordpress -pwordpress wordpress > backups/backup_$(date +%Y-%m-%d-%H.%M.%S).sql",
-  packageJson.scripts.restore = "docker exec test_db_1 /usr/bin/mysqldump -u wordpress -pwordpress wordpress < backups/$BACKUP_FILE_NAME.sql"
+  packageJson.scripts.backup = `docker exec -it ${answers.name}_db_1 /usr/bin/mysqldump -u wordpress -pwordpress wordpress > backups/backup_$(date +%Y-%m-%d-%H.%M.%S).sql`,
+  packageJson.scripts.restore = `docker exec ${answers.name}_db_1 /usr/bin/mysqldump -u wordpress -pwordpress wordpress < backups/$BACKUP_FILE_NAME.sql`
 }
 
 async function installOptions(ctx) {
