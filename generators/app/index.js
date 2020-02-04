@@ -85,6 +85,7 @@ async function configureOptions() {
   packageJson.scripts.start = 'docker-compose up -d'
   packageJson.scripts.backup = `docker exec -it ${answers.name}_db_1 /usr/bin/mysqldump -u wordpress -pwordpress wordpress > backups/backup_$(date +%Y-%m-%d-%H.%M.%S).sql`,
   packageJson.scripts.restore = `docker exec ${answers.name}_db_1 /usr/bin/mysqldump -u wordpress -pwordpress wordpress < backups/$BACKUP_FILE_NAME.sql`
+  packageJson.scripts['php-install'] = "composer install"
 }
 
 async function installOptions(ctx) {
