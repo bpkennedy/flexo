@@ -165,6 +165,14 @@ async function installOptions(ctx) {
     ctx.destinationPath(baseDirectory + '/webpack.config.js'),
     { name: answers.name }
   );
+  ctx.fs.copy(
+    ctx.templatePath('.gitattributes'),
+    ctx.destinationPath(srcDirectory + '/.gitattributes')
+  );
+  ctx.fs.copy(
+    ctx.templatePath('.gitignore'),
+    ctx.destinationPath(srcDirectory + '/.gitignore')
+  );
 }
 
 module.exports = class extends Generator {
