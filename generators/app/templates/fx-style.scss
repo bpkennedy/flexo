@@ -1,10 +1,10 @@
 /* FLEXO - import default theme style.css */
-@import "./style";
+@import "./theme-default.css";
 
 /* FLEXO - demonstrate using custom font from src directory */
 @font-face {
   font-family: 'FlexoSampleFont';
-  src: url('./fx-sample.ttf') format('truetype');
+  src: url('../fonts/fx-sample.ttf') format('truetype');
 }
 .sample-font-relative-to-src-directory {
   font-family: 'FlexoSampleFont';
@@ -12,5 +12,5 @@
 
 /* FLEXO - demonstrate using images from src directory */
 .sample-image-relative-to-src-directory {
-  background: url('./fx-sample.png');
+  background: url('../images/fx-sample.png');
 }
